@@ -89,8 +89,8 @@ section{padding-block:56px;border-top:1px solid var(--line)}
 .case h3{font-size:22px;font-weight:700;letter-spacing:-.01em}
 .case p{color:var(--muted);font-size:15.5px}
 .case ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
-.case li{display:grid;grid-template-columns:72px 1fr;gap:10px;font-size:15px;align-items:baseline}
-.case li b{font-family:var(--display);font-size:20px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.case li{position:relative;padding-left:22px;font-size:15px}
+.case li::before{content:"";position:absolute;left:0;top:.45em;width:11px;height:12px;background:var(--accent);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 
 /* how I build */
 .build{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px}
@@ -199,7 +199,7 @@ footer{padding-block:28px 40px;color:var(--muted);font-size:14px}
   <div class="wrap">
     <div class="head">
       <h2>Selected work</h2>
-      <p>A few projects from my day job, with the numbers I can share.</p>
+      <p>A few projects from my day job and what changed because of them.</p>
     </div>
     <div class="cases">
       <article class="case">
@@ -207,9 +207,9 @@ footer{padding-block:28px 40px;color:var(--muted);font-size:14px}
         <h3>Rebuilding how fans find content</h3>
         <p>I built the company product roadmap with IGN's executives and directed the modernization that came out of it: new search, navigation, personalization, Shorts and Daily Games.</p>
         <ul>
-          <li><b>+39%</b><span>mobile navigation reach in the redesign's first week</span></li>
-          <li><b>10%</b><span>of logged-in users reached by For You recommendations in week one</span></li>
-          <li><b>+40%</b><span>video views after launching IGN Shorts, a native vertical feed</span></li>
+          <li>More readers, especially on mobile, now use navigation to reach content</li>
+          <li>Logged-in readers get personalized recommendations through For You</li>
+          <li>IGN Shorts, a native vertical feed, grew how much video people watch on IGN.com</li>
         </ul>
       </article>
       <article class="case">
@@ -217,9 +217,9 @@ footer{padding-block:28px 40px;color:var(--muted);font-size:14px}
         <h3>Product work run by AI agents</h3>
         <p>I lead the product side of IGN's shift to AI agents across software delivery. Agents take work from intake to PRD to ready tickets, with a person approving every risky step.</p>
         <ul>
-          <li><b>2</b><span>agents on every task: one does the work, another checks it</span></li>
-          <li><b>1</b><span>agent with write access to the ticketing system</span></li>
-          <li><b>0</b><span>live changes before a test run</span></li>
+          <li>One agent does the work and another checks it</li>
+          <li>PMs and designers run the workflows on their own</li>
+          <li>The team ships more without adding headcount</li>
         </ul>
       </article>
       <article class="case">
@@ -227,9 +227,9 @@ footer{padding-block:28px 40px;color:var(--muted);font-size:14px}
         <h3>Audiences, ad-tech and subscriptions</h3>
         <p>Fan voting at Ranker, programmatic ad products at Freestar, and a premium research platform at Investor's Business Daily.</p>
         <ul>
-          <li><b>60M+</b><span>monthly users on Ranker.com</span></li>
-          <li><b>1.5M</b><span>monthly users on Wishbone, Mammoth Media's polling app</span></li>
-          <li><b>$1.5M</b><span>added revenue from MarketSmith features</span></li>
+          <li>Led Ranker.com, one of the web's largest fan-voting sites</li>
+          <li>Led the team behind Wishbone, Mammoth Media's most popular app</li>
+          <li>Shipped MarketSmith features that improved retention and grew revenue</li>
         </ul>
       </article>
     </div>
