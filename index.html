@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jaime Segovia</title>
+<meta name="description" content="Jaime Segovia, product leader who builds. Small web games, discovery and personalization work, and AI-native product development.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a tabletop. Name and thesis beside a hex board; then a playground of games, a few case files, a short note on how I build. */
+:root{
+  --bg:#eef0f4; --surface:#ffffff; --ink:#1a1f2e; --muted:#586078; --line:#d6dae4;
+  --accent:#b9821f; --accent-ink:#ffffff;
+  --wood:#3f7d4e; --brick:#b5523b; --ore:#7c8294; --sheep:#86b356; --wheat:#d9a83b; --sea:#c9d6e6;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Instrument Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11141d; --surface:#1a1f2e; --ink:#e8ebf2; --muted:#9aa2b8; --line:#2a3043;
+  --accent:#e2b04c; --accent-ink:#1a1f2e;
+  --wood:#4f9461; --brick:#c9654c; --ore:#8b91a3; --sheep:#97c466; --wheat:#e2b04c; --sea:#233049;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#11141d; --surface:#1a1f2e; --ink:#e8ebf2; --muted:#9aa2b8; --line:#2a3043;
+  --accent:#e2b04c; --accent-ink:#1a1f2e;
+  --wood:#4f9461; --brick:#c9654c; --ore:#8b91a3; --sheep:#97c466; --wheat:#e2b04c; --sea:#233049;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+a{color:inherit;text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:2px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0}
+p{margin:0}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px;flex-wrap:wrap}
+.mark{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.01em}
+.nav{display:flex;gap:20px;flex-wrap:wrap;font-size:15px}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-block:40px 64px}
+.hero > div{min-width:0}
+.hero h1{font-size:clamp(44px,7.4vw,88px);font-weight:800;letter-spacing:-.035em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lede{margin-top:22px;font-size:20px;max-width:34ch;color:var(--ink)}
+.sub{margin-top:14px;max-width:52ch;color:var(--muted)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.primary:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:hover{color:var(--accent);border-color:var(--accent)}
+.board{width:100%;max-width:440px;aspect-ratio:1/1;justify-self:end}
+.board canvas{width:100%;height:100%;display:block}
+
+/* sections */
+section{padding-block:56px;border-top:1px solid var(--line)}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.head h2{font-size:clamp(30px,4vw,44px);font-weight:700;letter-spacing:-.02em}
+.head p{color:var(--muted);max-width:46ch}
+
+/* playground */
+.game{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.game > div{min-width:0}
+.game-art{background:var(--sea);position:relative;min-height:300px}
+.game-art canvas{position:absolute;inset:0;width:100%;height:100%}
+.game-body{padding:32px;display:flex;flex-direction:column;gap:16px}
+.game-body h3{font-size:32px;font-weight:800;letter-spacing:-.02em}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.chip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
+.game-body dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:15px}
+.game-body dt{color:var(--muted)}
+.game-body dd{margin:0}
+.next{margin-top:18px;display:flex;align-items:center;gap:14px;padding:18px 22px;border:1.5px dashed var(--line);border-radius:18px;color:var(--muted);font-size:15px}
+.next svg{flex:none}
+
+/* case files */
+.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.case{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:3px solid var(--ink);min-width:0}
+.case h3{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.case p{color:var(--muted);font-size:15.5px}
+.case ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.case li{display:grid;grid-template-columns:72px 1fr;gap:10px;font-size:15px;align-items:baseline}
+.case li b{font-family:var(--display);font-size:20px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* how I build */
+.build{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px}
+.build > div{min-width:0}
+.build h2{font-size:clamp(30px,4vw,44px);font-weight:700;letter-spacing:-.02em}
+.build .prose{display:flex;flex-direction:column;gap:16px;max-width:62ch}
+.loop{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.loop div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14.5px}
+.loop strong{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
+
+/* path */
+.path{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px}
+.stop{display:flex;flex-direction:column;gap:4px;font-size:15px}
+.stop .yrs{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stop strong{font-family:var(--display);font-size:18px}
+.stop span:last-child{color:var(--muted)}
+
+/* contact */
+.contact{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.contact h2{font-size:clamp(30px,4vw,44px);font-weight:700;letter-spacing:-.02em}
+.mail{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mail code{font-family:var(--mono);font-size:15px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);user-select:all}
+button.copy{font:600 14px var(--body);padding:10px 14px;border-radius:10px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+button.copy:hover{border-color:var(--accent);color:var(--accent)}
+footer{padding-block:28px 40px;color:var(--muted);font-size:14px}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-block:16px 48px}
+  .board{justify-self:start;max-width:320px;order:-1}
+  .game{grid-template-columns:1fr}
+  .game-art{min-height:220px}
+  .cases{grid-template-columns:1fr;gap:32px}
+  .build{grid-template-columns:1fr;gap:20px}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .loop{grid-template-columns:1fr}
+  .game-body{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="mark">Jaime Segovia</span>
+    <nav class="nav" aria-label="Sections">
+      <a href="#playground">Playground</a>
+      <a href="#work">Work</a>
+      <a href="#build">How I build</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <p class="label">Product leader · Los Angeles</p>
+      <h1>I lead product.<br>I also <em>build</em> things.</h1>
+      <p class="lede">Twelve years shipping consumer products for gamers, fans and readers.</p>
+      <p class="sub">I head product at IGN Entertainment, where I lead Product Management, Design and Operations. On the side I make small web games, built by directing AI coding tools. This page collects both.</p>
+      <div class="actions">
+        <a class="btn primary" href="#playground">Play something</a>
+        <a class="btn" href="https://www.linkedin.com/in/jaime-segovia/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <div class="board" aria-hidden="true"><canvas id="hero-board"></canvas></div>
+  </div>
+</div>
+
+<section id="playground">
+  <div class="wrap">
+    <div class="head">
+      <h2>Playground</h2>
+      <p>Small, free games and web experiences. No downloads, no accounts, no ads.</p>
+    </div>
+
+    <article class="game">
+      <div class="game-art" aria-hidden="true"><canvas id="game-board"></canvas></div>
+      <div class="game-body">
+        <p class="label">Game 01 · Released January 2026</p>
+        <h3>Settlers of Oregon</h3>
+        <p>A hex-based strategy board game you play in the browser. Gather resources, trade, build settlements, and race to the win.</p>
+        <div class="facts">
+          <span class="chip"><i style="background:var(--wood)"></i>Strategy</span>
+          <span class="chip"><i style="background:var(--wheat)"></i>Trading</span>
+          <span class="chip"><i style="background:var(--brick)"></i>Browser</span>
+        </div>
+        <dl>
+          <dt>Built with</dt><dd>Cursor, directing AI coding agents</dd>
+          <dt>What I explored</dt><dd>How far one product person can take a full game loop with AI as the engineering team</dd>
+        </dl>
+        <div class="actions" style="margin-top:4px">
+          <a class="btn primary" href="https://hexhobbyist.com/" target="_blank" rel="noopener">Play at hexhobbyist.com</a>
+        </div>
+      </div>
+    </article>
+
+    <div class="next">
+      <svg width="28" height="32" viewBox="0 0 28 32" aria-hidden="true"><path d="M14 1 27 8.5v15L14 31 1 23.5v-15Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/></svg>
+      <span>More experiences are in progress. New games land here as they ship.</span>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="head">
+      <h2>Selected work</h2>
+      <p>A few projects from my day job, with the numbers I can share.</p>
+    </div>
+    <div class="cases">
+      <article class="case">
+        <p class="label">IGN Entertainment</p>
+        <h3>Rebuilding how fans find content</h3>
+        <p>I built the company product roadmap with IGN's executives and directed the modernization that came out of it: new search, navigation, personalization, Shorts and Daily Games.</p>
+        <ul>
+          <li><b>+39%</b><span>mobile navigation reach in the redesign's first week</span></li>
+          <li><b>10%</b><span>of logged-in users reached by For You recommendations in week one</span></li>
+          <li><b>+40%</b><span>video views after launching IGN Shorts, a native vertical feed</span></li>
+        </ul>
+      </article>
+      <article class="case">
+        <p class="label">IGN Entertainment</p>
+        <h3>Product work run by AI agents</h3>
+        <p>I lead the product side of IGN's shift to AI agents across software delivery. Agents take work from intake to PRD to ready tickets, with a person approving every risky step.</p>
+        <ul>
+          <li><b>2</b><span>agents on every task: one does the work, another checks it</span></li>
+          <li><b>1</b><span>agent with write access to the ticketing system</span></li>
+          <li><b>0</b><span>live changes before a test run</span></li>
+        </ul>
+      </article>
+      <article class="case">
+        <p class="label">Before IGN</p>
+        <h3>Audiences, ad-tech and subscriptions</h3>
+        <p>Fan voting at Ranker, programmatic ad products at Freestar, and a premium research platform at Investor's Business Daily.</p>
+        <ul>
+          <li><b>60M+</b><span>monthly users on Ranker.com</span></li>
+          <li><b>1.5M</b><span>monthly users on Wishbone, Mammoth Media's polling app</span></li>
+          <li><b>$1.5M</b><span>added revenue from MarketSmith features</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="build">
+  <div class="wrap build">
+    <div>
+      <p class="label">Process</p>
+      <h2>How I build</h2>
+    </div>
+    <div class="prose">
+      <p>I'm a product person, not an engineer. I work by directing AI tools: Cursor and Claude Code for building, and a set of agents for the product work around it.</p>
+      <p>The rule I keep, at work and on side projects, is that agents do the work and a person makes the call. Every change gets checked, risky steps wait for approval, and nothing touches a live system until it has run in a test.</p>
+      <div class="loop">
+        <div><strong>Shape</strong>Write the spec until the decisions are made.</div>
+        <div><strong>Build</strong>Agents write and review the code.</div>
+        <div><strong>Play</strong>Test it like a player, then iterate.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="path-h">
+  <div class="wrap">
+    <div class="head"><h2 id="path-h">Path</h2></div>
+    <div class="path">
+      <div class="stop"><span class="yrs">2023 – now</span><strong>IGN Entertainment</strong><span>Senior Director of Product Development</span></div>
+      <div class="stop"><span class="yrs">2020 – 2023</span><strong>Freestar</strong><span>Group Product Manager</span></div>
+      <div class="stop"><span class="yrs">2018 – 2020</span><strong>Ranker</strong><span>Senior Product Manager</span></div>
+      <div class="stop"><span class="yrs">2017 – 2018</span><strong>Mammoth Media</strong><span>Product Manager</span></div>
+      <div class="stop"><span class="yrs">2011 – 2017</span><strong>William O'Neil + Co.</strong><span>QA to Product Manager</span></div>
+      <div class="stop"><span class="yrs">2008 – 2011</span><strong>Activision Blizzard</strong><span>QA Floor Lead</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <h2>Say hello</h2>
+      <div class="mail">
+        <code id="email">jsegovia83@gmail.com</code>
+        <button class="copy" id="copy-email" type="button">Copy email</button>
+        <a class="btn" href="https://www.linkedin.com/in/jaime-segovia/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">© 2026 Jaime Segovia · Games published as Hexhobbyist</div></footer>
+
+<script>
+(function(){
+  var tokens = ['--wood','--brick','--ore','--sheep','--wheat'];
+  function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  // Standard 3-4-5-4-3 board in axial coords
+  var cells=[]; for(var q=-2;q<=2;q++){ for(var r=-2;r<=2;r++){ var s=-q-r; if(Math.abs(s)<=2) cells.push([q,r]); } }
+  var order=[0,4,1,2,3,0,4,2,1,3,4,0,1,3,2,4,0,1,3]; // fixed, so the board looks the same every visit
+  function hex(ctx,x,y,size){ ctx.beginPath(); for(var i=0;i<6;i++){ var a=Math.PI/180*(60*i-30); ctx.lineTo(x+size*Math.cos(a), y+size*Math.sin(a)); } ctx.closePath(); }
+  function draw(id, opts){
+    var c=document.getElementById(id); if(!c) return;
+    var rect=c.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+    if(!rect.width) return;
+    c.width=rect.width*dpr; c.height=rect.height*dpr;
+    var ctx=c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
+    var size=Math.min(rect.width/ (Math.sqrt(3)*5.6), rect.height/8.6) * (opts.scale||1);
+    var cx=rect.width/2, cy=rect.height/2, bg=css('--bg'), ink=css('--ink');
+    cells.forEach(function(cell,i){
+      var x=cx+size*Math.sqrt(3)*(cell[0]+cell[1]/2), y=cy+size*1.5*cell[1];
+      hex(ctx,x,y,size*0.94); ctx.fillStyle=css(tokens[order[i]]); ctx.fill();
+      if(opts.numbers && !(cell[0]===0&&cell[1]===0)){
+        var n=[5,2,6,3,8,10,9,12,11,4,8,10,9,4,5,6,3,11][i%18];
+        ctx.beginPath(); ctx.arc(x,y,size*0.32,0,Math.PI*2); ctx.fillStyle=bg; ctx.fill();
+        ctx.fillStyle=(n===6||n===8)?css('--brick'):ink; ctx.font='700 '+Math.round(size*0.34)+'px "Bricolage Grotesque", system-ui, sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(n,x,y+1);
+      }
+    });
+    if(opts.numbers){ // robber on the center tile
+      var rx=cx, ry=cy; ctx.beginPath(); ctx.arc(rx,ry,size*0.3,0,Math.PI*2); ctx.fillStyle=ink; ctx.fill();
+    }
+  }
+  function all(){ draw('hero-board',{numbers:true}); draw('game-board',{numbers:false,scale:1.05}); }
+  all();
+  window.addEventListener('resize', all);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(all);
+  try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', all); }catch(e){}
+  new MutationObserver(all).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+  var btn=document.getElementById('copy-email');
+  btn.addEventListener('click', function(){
+    var t=document.getElementById('email').textContent;
+    function sel(){ var r=document.createRange(); r.selectNodeContents(document.getElementById('email')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent='Selected. Press copy'; }
+    try{ navigator.clipboard.writeText(t).then(function(){ btn.textContent='Copied'; setTimeout(function(){btn.textContent='Copy email'},1800); }, sel); }catch(e){ sel(); }
+  });
+})();
+</script>
+
+</body>
+</html>
